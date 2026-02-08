@@ -1,0 +1,101 @@
+{
+  "categories": [
+    { "id": "academic", "name": "Academic", "color": "#4f46e5" },
+    { "id": "exam", "name": "Exams", "color": "#dc2626" },
+    { "id": "holiday", "name": "Holidays", "color": "#16a34a" },
+    { "id": "sports", "name": "Sports", "color": "#ea580c" },
+    { "id": "cultural", "name": "Cultural", "color": "#9333ea" }
+  ],
+  "events": [
+    {
+      "id": 1,
+      "title": "Spring Semester Begins",
+      "start": "2026-01-12",
+      "end": "2026-01-12",
+      "category": "academic",
+      "description": "First day of classes for Spring 2026",
+      "location": "All Campuses"
+    },
+    {
+      "id": 2,
+      "title": "Martin Luther King Jr. Day",
+      "start": "2026-01-19",
+      "end": "2026-01-19",
+      "category": "holiday",
+      "description": "University closed - No classes",
+      "location": ""
+    },
+    {
+      "id": 3,
+      "title": "Midterm Exams",
+      "start": "2026-03-02",
+      "end": "2026-03-06",
+      "category": "exam",
+      "description": "Midterm examination week",
+      "location": "Examination Halls A-D"
+    },
+    {
+      "id": 4,
+      "title": "Spring Break",
+      "start": "2026-03-16",
+      "end": "2026-03-20",
+      "category": "holiday",
+      "description": "Spring recess - No classes",
+      "location": ""
+    },
+    {
+      "id": 5,
+      "title": "Basketball Championship",
+      "start": "2026-02-14",
+      "end": "2026-02-14",
+      "category": "sports",
+      "description": "Inter-university basketball finals",
+      "location": "University Arena"
+    },
+    {
+      "id": 6,
+      "title": "Spring Arts Festival",
+      "start": "2026-04-06",
+      "end": "2026-04-10",
+      "category": "cultural",
+      "description": "Annual spring arts and music festival",
+      "location": "Student Center & Quad"
+    },
+    {
+      "id": 7,
+      "title": "Final Exams",
+      "start": "2026-05-04",
+      "end": "2026-05-08",
+      "category": "exam",
+      "description": "Final examination period",
+      "location": "Examination Halls A-D"
+    },
+    {
+      "id": 8,
+      "title": "Commencement Ceremony",
+      "start": "2026-05-16",
+      "end": "2026-05-16",
+      "category": "academic",
+      "description": "Spring 2026 graduation ceremony",
+      "location": "University Stadium"
+    },
+    {
+      "id": 9,
+      "title": "Research Symposium",
+      "start": "2026-02-23",
+      "end": "2026-02-25",
+      "category": "academic",
+      "description": "Annual undergraduate research presentations",
+      "location": "Science Building Auditorium"
+    },
+    {
+      "id": 10,
+      "title": "Track & Field Meet",
+      "start": "2026-04-18",
+      "end": "2026-04-19",
+      "category": "sports",
+      "description": "Regional track and field competition",
+      "location": "Athletics Complex"
+    }
+  ]
+}
