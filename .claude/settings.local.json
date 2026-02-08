@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm create:*)",
+      "Bash(export NVM_DIR=\"$HOME/.nvm\")",
+      "Bash([ -s \"$NVM_DIR/nvm.sh\" ])",
+      "Bash(. \"$NVM_DIR/nvm.sh\")",
+      "Bash(npm --version)",
+      "Bash(node:*)",
+      "Bash(PATH=\"/usr/local/bin:/opt/homebrew/bin:$HOME/.nvm/versions/node/*/bin:$PATH\" bash -c 'which npm 2>/dev/null; which node 2>/dev/null; ls $HOME/.nvm/versions/node/*/bin/npm 2>/dev/null')",
+      "Bash(ZDOTDIR=/tmp/empty_zsh_config zsh:*)"
+    ]
+  }
+}
