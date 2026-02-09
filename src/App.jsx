@@ -10,6 +10,9 @@ import {
   Trash2,
   FilePlus,
   CalendarDays,
+  Calendar,
+  List,
+  MapPin,
 } from 'lucide-react'
 
 const EMPTY_FORM = {
@@ -29,6 +32,26 @@ const EMPTY_FORM = {
 function formatDate(dateStr) {
   if (!dateStr) return ''
   return dateStr.slice(0, 10)
+}
+
+// Magyar nyelvű dátum megjelenítés az idővonalhoz
+function formatDateHu(dateStr) {
+  if (!dateStr) return ''
+  const d = new Date(dateStr + 'T00:00:00')
+  return d.toLocaleDateString('hu-HU', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  })
+}
+
+function formatDateShort(dateStr) {
+  if (!dateStr) return ''
+  const d = new Date(dateStr + 'T00:00:00')
+  return d.toLocaleDateString('hu-HU', {
+    month: 'short',
+    day: 'numeric',
+  })
 }
 
 // A FullCalendar exkluzív záró dátumot használ.
@@ -54,6 +77,7 @@ export default function App() {
   const [semester, setSemester] = useState(null)
   const [form, setForm] = useState({ ...EMPTY_FORM })
   const [fileName, setFileName] = useState('')
+  const [view, setView] = useState('calendar')
   const fileInputRef = useRef(null)
   const calendarRef = useRef(null)
 
@@ -86,6 +110,11 @@ export default function App() {
       }
     })
   }, [events, categoryMap])
+
+  // Idővonal nézethez: dátum szerint rendezett események
+  const sortedEvents = useMemo(() => {
+    return [...events].sort((a, b) => a.date.localeCompare(b.date))
+  }, [events])
 
   // --- Fájlkezelés ---
   const handleUpload = useCallback((e) => {
@@ -496,10 +525,10 @@ export default function App() {
           )}
         </aside>
 
-        {/* Jobb panel — Naptár */}
-        <main className="flex-1 overflow-auto p-4">
+        {/* Jobb panel — Naptár / Idővonal */}
+        <main className="flex-1 overflow-auto p-4 flex flex-col">
           {events.length === 0 ? (
-            <div className="h-full flex flex-col items-center justify-center text-gray-400">
+            <div className="flex-1 flex flex-col items-center justify-center text-gray-400">
               <CalendarDays className="w-16 h-16 mb-4 opacity-40" />
               <p className="text-lg font-medium">Nincs betöltött esemény</p>
               <p className="text-sm mt-1">
@@ -507,26 +536,148 @@ export default function App() {
               </p>
             </div>
           ) : (
-            <FullCalendar
-              ref={calendarRef}
-              plugins={[dayGridPlugin, interactionPlugin]}
-              initialView="dayGridMonth"
-              locale={huLocale}
-              events={calendarEvents}
-              editable={true}
-              selectable={true}
-              eventClick={handleEventClick}
-              dateClick={handleDateClick}
-              eventDrop={handleEventDrop}
-              headerToolbar={{
-                left: 'prev,next today',
-                center: 'title',
-                right: '',
-              }}
-              height="100%"
-              dayMaxEvents={3}
-              eventDisplay="block"
-            />
+            <>
+              {/* Nézet-váltó gombok */}
+              <div className="flex items-center gap-1 mb-3 bg-gray-200 rounded-lg p-1 w-fit">
+                <button
+                  onClick={() => setView('calendar')}
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-md transition-colors cursor-pointer ${
+                    view === 'calendar'
+                      ? 'bg-white text-gray-900 shadow-sm'
+                      : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  <Calendar className="w-4 h-4" />
+                  Naptár
+                </button>
+                <button
+                  onClick={() => setView('timeline')}
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-md transition-colors cursor-pointer ${
+                    view === 'timeline'
+                      ? 'bg-white text-gray-900 shadow-sm'
+                      : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  <List className="w-4 h-4" />
+                  Idővonal
+                </button>
+              </div>
+
+              {/* Nézet tartalom */}
+              {view === 'calendar' ? (
+                <div className="flex-1 min-h-0">
+                  <FullCalendar
+                    ref={calendarRef}
+                    plugins={[dayGridPlugin, interactionPlugin]}
+                    initialView="dayGridMonth"
+                    locale={huLocale}
+                    events={calendarEvents}
+                    editable={true}
+                    selectable={true}
+                    eventClick={handleEventClick}
+                    dateClick={handleDateClick}
+                    eventDrop={handleEventDrop}
+                    headerToolbar={{
+                      left: 'prev,next today',
+                      center: 'title',
+                      right: '',
+                    }}
+                    height="100%"
+                    dayMaxEvents={3}
+                    eventDisplay="block"
+                  />
+                </div>
+              ) : (
+                <div className="flex-1 overflow-y-auto">
+                  <div className="relative pl-8">
+                    {/* Függőleges idővonal vonal */}
+                    <div className="absolute left-3 top-2 bottom-2 w-0.5 bg-gray-300" />
+
+                    {sortedEvents.map((ev) => {
+                      const cat = categoryMap[ev.category]
+                      const color = cat?.color || '#6366f1'
+                      const isActive = form.id === ev.id
+                      return (
+                        <div
+                          key={ev.id}
+                          onClick={() => {
+                            const original = events.find(
+                              (e) => e.id === ev.id
+                            )
+                            setForm({
+                              id: ev.id,
+                              title: ev.title,
+                              titleEn: original?.titleEn || '',
+                              date: ev.date,
+                              endDate: ev.endDate || '',
+                              category: ev.category,
+                              description: ev.description || '',
+                              descriptionEn: original?.descriptionEn || '',
+                              location: ev.location || '',
+                              locationEn: original?.locationEn || '',
+                              link: original?.link || '',
+                            })
+                          }}
+                          className={`relative mb-4 cursor-pointer group transition-all ${
+                            isActive ? 'scale-[1.01]' : ''
+                          }`}
+                        >
+                          {/* Idővonal pont */}
+                          <div
+                            className="absolute -left-5 top-4 w-3 h-3 rounded-full border-2 border-white shadow-sm"
+                            style={{ backgroundColor: color }}
+                          />
+
+                          {/* Esemény kártya */}
+                          <div
+                            className={`ml-4 p-3 rounded-lg border transition-shadow ${
+                              isActive
+                                ? 'border-indigo-400 shadow-md bg-indigo-50'
+                                : 'border-gray-200 bg-white group-hover:shadow-md group-hover:border-gray-300'
+                            }`}
+                          >
+                            <div className="flex items-start justify-between gap-2">
+                              <div className="flex-1 min-w-0">
+                                <h3 className="text-sm font-semibold text-gray-900 truncate">
+                                  {ev.title}
+                                </h3>
+                                <p className="text-xs text-gray-500 mt-0.5">
+                                  {formatDateHu(ev.date)}
+                                  {ev.endDate &&
+                                    ev.endDate !== ev.date &&
+                                    ` — ${formatDateShort(ev.endDate)}`}
+                                </p>
+                              </div>
+                              <span
+                                className="shrink-0 px-2 py-0.5 text-[10px] font-medium rounded-full text-white"
+                                style={{ backgroundColor: color }}
+                              >
+                                {cat?.name || ev.category}
+                              </span>
+                            </div>
+                            {(ev.description?.trim() || ev.location?.trim()) && (
+                              <div className="mt-2 flex flex-col gap-1">
+                                {ev.description?.trim() && (
+                                  <p className="text-xs text-gray-600 line-clamp-2">
+                                    {ev.description}
+                                  </p>
+                                )}
+                                {ev.location?.trim() && (
+                                  <p className="text-xs text-gray-400 flex items-center gap-1">
+                                    <MapPin className="w-3 h-3" />
+                                    {ev.location}
+                                  </p>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </main>
       </div>
