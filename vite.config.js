@@ -4,6 +4,6 @@ import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
   base: '/Timeline/',
-  build: { outDir: 'docs' },
+  build: { outDir: 'dist' },
   plugins: [react(), tailwindcss()],
 })
