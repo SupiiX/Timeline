@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - 'claude/**'
 
 permissions:
   contents: read
